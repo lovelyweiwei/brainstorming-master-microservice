@@ -10,14 +10,14 @@ import com.weiwei.brainstorming.common.ResultUtils;
 import com.weiwei.brainstorming.constant.UserConstant;
 import com.weiwei.brainstorming.exception.BusinessException;
 import com.weiwei.brainstorming.exception.ThrowUtils;
-import com.weiwei.brainstorming.model.dto.post.PostAddRequest;
-import com.weiwei.brainstorming.model.dto.post.PostEditRequest;
-import com.weiwei.brainstorming.model.dto.post.PostQueryRequest;
-import com.weiwei.brainstorming.model.dto.post.PostUpdateRequest;
-import com.weiwei.brainstorming.model.entity.Post;
+import com.weiwei.brainstorming.model.dto.question.QuestionAddRequest;
+import com.weiwei.brainstorming.model.dto.question.QuestionEditRequest;
+import com.weiwei.brainstorming.model.dto.question.QuestionQueryRequest;
+import com.weiwei.brainstorming.model.dto.question.QuestionUpdateRequest;
+import com.weiwei.brainstorming.model.entity.Question;
 import com.weiwei.brainstorming.model.entity.User;
-import com.weiwei.brainstorming.model.vo.PostVO;
-import com.weiwei.brainstorming.service.PostService;
+import com.weiwei.brainstorming.model.vo.QuestionVO;
+import com.weiwei.brainstorming.service.QuestionService;
 import com.weiwei.brainstorming.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -28,16 +28,15 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * 帖子接口
- *
+ * 题目接口
  */
 @RestController
-@RequestMapping("/post")
+@RequestMapping("/question")
 @Slf4j
 public class QuestionController {
 
     @Resource
-    private PostService postService;
+    private QuestionService questionService;
 
     @Resource
     private UserService userService;
@@ -49,30 +48,30 @@ public class QuestionController {
     /**
      * 创建
      *
-     * @param postAddRequest
+     * @param questionAddRequest
      * @param request
      * @return
      */
     @PostMapping("/add")
-    public BaseResponse<Long> addPost(@RequestBody PostAddRequest postAddRequest, HttpServletRequest request) {
-        if (postAddRequest == null) {
+    public BaseResponse<Long> addQuestion(@RequestBody QuestionAddRequest questionAddRequest, HttpServletRequest request) {
+        if (questionAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Post post = new Post();
-        BeanUtils.copyProperties(postAddRequest, post);
-        List<String> tags = postAddRequest.getTags();
+        Question question = new Question();
+        BeanUtils.copyProperties(questionAddRequest, question);
+        List<String> tags = questionAddRequest.getTags();
         if (tags != null) {
-            post.setTags(GSON.toJson(tags));
+            question.setTags(GSON.toJson(tags));
         }
-        postService.validPost(post, true);
+        questionService.validQuestion(question, true);
         User loginUser = userService.getLoginUser(request);
-        post.setUserId(loginUser.getId());
-        post.setFavourNum(0);
-        post.setThumbNum(0);
-        boolean result = postService.save(post);
+        question.setUserId(loginUser.getId());
+        question.setFavourNum(0);
+        question.setThumbNum(0);
+        boolean result = questionService.save(question);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-        long newPostId = post.getId();
-        return ResultUtils.success(newPostId);
+        long newQuestionId = question.getId();
+        return ResultUtils.success(newQuestionId);
     }
 
     /**
@@ -83,48 +82,48 @@ public class QuestionController {
      * @return
      */
     @PostMapping("/delete")
-    public BaseResponse<Boolean> deletePost(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> deleteQuestion(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User user = userService.getLoginUser(request);
         long id = deleteRequest.getId();
         // 判断是否存在
-        Post oldPost = postService.getById(id);
-        ThrowUtils.throwIf(oldPost == null, ErrorCode.NOT_FOUND_ERROR);
+        Question oldQuestion = questionService.getById(id);
+        ThrowUtils.throwIf(oldQuestion == null, ErrorCode.NOT_FOUND_ERROR);
         // 仅本人或管理员可删除
-        if (!oldPost.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
+        if (!oldQuestion.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
-        boolean b = postService.removeById(id);
+        boolean b = questionService.removeById(id);
         return ResultUtils.success(b);
     }
 
     /**
      * 更新（仅管理员）
      *
-     * @param postUpdateRequest
+     * @param questionUpdateRequest
      * @return
      */
     @PostMapping("/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Boolean> updatePost(@RequestBody PostUpdateRequest postUpdateRequest) {
-        if (postUpdateRequest == null || postUpdateRequest.getId() <= 0) {
+    public BaseResponse<Boolean> updateQuestion(@RequestBody QuestionUpdateRequest questionUpdateRequest) {
+        if (questionUpdateRequest == null || questionUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Post post = new Post();
-        BeanUtils.copyProperties(postUpdateRequest, post);
-        List<String> tags = postUpdateRequest.getTags();
+        Question question = new Question();
+        BeanUtils.copyProperties(questionUpdateRequest, question);
+        List<String> tags = questionUpdateRequest.getTags();
         if (tags != null) {
-            post.setTags(GSON.toJson(tags));
+            question.setTags(GSON.toJson(tags));
         }
         // 参数校验
-        postService.validPost(post, false);
-        long id = postUpdateRequest.getId();
+        questionService.validQuestion(question, false);
+        long id = questionUpdateRequest.getId();
         // 判断是否存在
-        Post oldPost = postService.getById(id);
-        ThrowUtils.throwIf(oldPost == null, ErrorCode.NOT_FOUND_ERROR);
-        boolean result = postService.updateById(post);
+        Question oldQuestion = questionService.getById(id);
+        ThrowUtils.throwIf(oldQuestion == null, ErrorCode.NOT_FOUND_ERROR);
+        boolean result = questionService.updateById(question);
         return ResultUtils.success(result);
     }
 
@@ -135,109 +134,93 @@ public class QuestionController {
      * @return
      */
     @GetMapping("/get/vo")
-    public BaseResponse<PostVO> getPostVOById(long id, HttpServletRequest request) {
+    public BaseResponse<QuestionVO> getQuestionVOById(long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Post post = postService.getById(id);
-        if (post == null) {
+        Question question = questionService.getById(id);
+        if (question == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        return ResultUtils.success(postService.getPostVO(post, request));
+        return ResultUtils.success(questionService.getQuestionVO(question, request));
     }
 
     /**
      * 分页获取列表（封装类）
      *
-     * @param postQueryRequest
+     * @param questionQueryRequest
      * @param request
      * @return
      */
     @PostMapping("/list/page/vo")
-    public BaseResponse<Page<PostVO>> listPostVOByPage(@RequestBody PostQueryRequest postQueryRequest,
-            HttpServletRequest request) {
-        long current = postQueryRequest.getCurrent();
-        long size = postQueryRequest.getPageSize();
+    public BaseResponse<Page<QuestionVO>> listQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
+                                                               HttpServletRequest request) {
+        long current = questionQueryRequest.getCurrent();
+        long size = questionQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<Post> postPage = postService.page(new Page<>(current, size),
-                postService.getQueryWrapper(postQueryRequest));
-        return ResultUtils.success(postService.getPostVOPage(postPage, request));
+        Page<Question> questionPage = questionService.page(new Page<>(current, size),
+                questionService.getQueryWrapper(questionQueryRequest));
+        return ResultUtils.success(questionService.getQuestionVOPage(questionPage, request));
     }
 
     /**
      * 分页获取当前用户创建的资源列表
      *
-     * @param postQueryRequest
+     * @param questionQueryRequest
      * @param request
      * @return
      */
     @PostMapping("/my/list/page/vo")
-    public BaseResponse<Page<PostVO>> listMyPostVOByPage(@RequestBody PostQueryRequest postQueryRequest,
-            HttpServletRequest request) {
-        if (postQueryRequest == null) {
+    public BaseResponse<Page<QuestionVO>> listMyQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
+                                                                 HttpServletRequest request) {
+        if (questionQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User loginUser = userService.getLoginUser(request);
-        postQueryRequest.setUserId(loginUser.getId());
-        long current = postQueryRequest.getCurrent();
-        long size = postQueryRequest.getPageSize();
+        questionQueryRequest.setUserId(loginUser.getId());
+        long current = questionQueryRequest.getCurrent();
+        long size = questionQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<Post> postPage = postService.page(new Page<>(current, size),
-                postService.getQueryWrapper(postQueryRequest));
-        return ResultUtils.success(postService.getPostVOPage(postPage, request));
+        Page<Question> questionPage = questionService.page(new Page<>(current, size),
+                questionService.getQueryWrapper(questionQueryRequest));
+        return ResultUtils.success(questionService.getQuestionVOPage(questionPage, request));
     }
 
     // endregion
 
-    /**
-     * 分页搜索（从 ES 查询，封装类）
-     *
-     * @param postQueryRequest
-     * @param request
-     * @return
-     */
-    @PostMapping("/search/page/vo")
-    public BaseResponse<Page<PostVO>> searchPostVOByPage(@RequestBody PostQueryRequest postQueryRequest,
-            HttpServletRequest request) {
-        long size = postQueryRequest.getPageSize();
-        // 限制爬虫
-        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<Post> postPage = postService.searchFromEs(postQueryRequest);
-        return ResultUtils.success(postService.getPostVOPage(postPage, request));
-    }
 
     /**
      * 编辑（用户）
      *
-     * @param postEditRequest
+     * @param questionEditRequest
      * @param request
      * @return
      */
     @PostMapping("/edit")
-    public BaseResponse<Boolean> editPost(@RequestBody PostEditRequest postEditRequest, HttpServletRequest request) {
-        if (postEditRequest == null || postEditRequest.getId() <= 0) {
+    public BaseResponse<Boolean> editQuestion(@RequestBody QuestionEditRequest questionEditRequest, HttpServletRequest request) {
+        if (questionEditRequest == null || questionEditRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Post post = new Post();
-        BeanUtils.copyProperties(postEditRequest, post);
-        List<String> tags = postEditRequest.getTags();
+        Question question = new Question();
+        BeanUtils.copyProperties(questionEditRequest, question);
+        List<String> tags = questionEditRequest.getTags();
         if (tags != null) {
-            post.setTags(GSON.toJson(tags));
+            question.setTags(GSON.toJson(tags));
         }
         // 参数校验
-        postService.validPost(post, false);
+        questionService.validQuestion(question, false);
         User loginUser = userService.getLoginUser(request);
-        long id = postEditRequest.getId();
+        long id = questionEditRequest.getId();
         // 判断是否存在
-        Post oldPost = postService.getById(id);
-        ThrowUtils.throwIf(oldPost == null, ErrorCode.NOT_FOUND_ERROR);
+        Question oldQuestion = questionService.getById(id);
+        ThrowUtils.throwIf(oldQuestion == null, ErrorCode.NOT_FOUND_ERROR);
         // 仅本人或管理员可编辑
-        if (!oldPost.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
+        if (!oldQuestion.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
-        boolean result = postService.updateById(post);
+        boolean result = questionService.updateById(question);
         return ResultUtils.success(result);
     }
 

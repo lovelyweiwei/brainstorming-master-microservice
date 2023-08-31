@@ -1,5 +1,5 @@
 <template>
-  <a-row id="globalHeader" style="margin-bottom: 16px" align="center">
+  <a-row id="globalHeader" align="center" :wrap="false">
     <a-col flex="auto">
       <a-menu
         mode="horizontal"
@@ -17,7 +17,7 @@
             <div class="title">头脑风暴 OJ</div>
           </div>
         </a-menu-item>
-        <a-menu-item v-for="item in routes" :key="item.path">
+        <a-menu-item v-for="item in visibleRoutes" :key="item.path">
           {{ item.name }}
         </a-menu-item>
       </a-menu>
@@ -32,12 +32,34 @@
 
 <script setup lang="ts">
 import { routes } from "../router/routes";
-import router from "@/router";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
+import checkAccess from "@/access/checkAccess";
+import ACCESS_ENUM from "@/access/accessEnum";
+import { useRouter } from "vue-router";
+
+const store = useStore();
+const router = useRouter();
 
 //默认主页
 const selectedKey = ref(["/"]);
+
+//显示在菜单的路由数组
+// 使用动态属性，当登录用户信息发生变更时，动态渲染菜单
+const visibleRoutes = computed(() => {
+  return routes.filter((item, index) => {
+    if (item.meta?.hideInMenu) {
+      return false;
+    }
+    // 根据权限过滤菜单
+    if (
+      !checkAccess(store.state.user.loginUser, item?.meta?.access as string)
+    ) {
+      return false;
+    }
+    return true;
+  });
+});
 
 // 路由跳转后，更新选中的菜单项
 router.afterEach((to, from, failure) => {
@@ -50,8 +72,12 @@ const doMenuClick = (key: string) => {
   });
 };
 
-// 获取存储信息
-const store = useStore();
+setTimeout(() => {
+  store.dispatch("user/getLoginUser", {
+    userName: "zw",
+    userRole: ACCESS_ENUM.ADMIN,
+  });
+}, 3000);
 </script>
 
 <style scoped>
