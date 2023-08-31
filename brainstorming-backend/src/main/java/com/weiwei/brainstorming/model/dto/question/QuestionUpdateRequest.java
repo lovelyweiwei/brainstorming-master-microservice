@@ -1,11 +1,8 @@
 package com.weiwei.brainstorming.model.dto.question;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,7 +49,7 @@ public class QuestionUpdateRequest implements Serializable {
     /**
      * 判题配置（json 对象）
      */
-    private List<JudgeConfig> judgeConfig;
+    private JudgeConfig judgeConfig;
 
     private static final long serialVersionUID = 1L;
 }
