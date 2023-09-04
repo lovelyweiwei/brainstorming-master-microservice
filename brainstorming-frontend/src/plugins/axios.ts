@@ -1,6 +1,8 @@
 // Add a request interceptor
 import axios from "axios";
 
+axios.defaults.withCredentials = true;
+
 /**
  * 全局请求响应拦截器
  */

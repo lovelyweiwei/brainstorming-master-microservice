@@ -13,7 +13,7 @@
       </a-layout-content>
       <a-layout-footer class="footer">
         <a href="https://api.ggbond.online" target="_blank">
-          头脑风暴OJ判题系统 by 张威
+          头脑风暴OJ判题系统 by zw
         </a>
       </a-layout-footer>
     </a-layout>
