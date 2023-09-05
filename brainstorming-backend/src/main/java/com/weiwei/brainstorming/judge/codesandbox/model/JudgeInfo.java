@@ -1,4 +1,4 @@
-package com.weiwei.brainstorming.model.dto.questionsubmit;
+package com.weiwei.brainstorming.judge.codesandbox.model;
 
 import lombok.Data;
 

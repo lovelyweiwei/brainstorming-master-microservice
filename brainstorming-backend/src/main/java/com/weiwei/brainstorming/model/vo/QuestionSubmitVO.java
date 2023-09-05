@@ -1,19 +1,13 @@
 package com.weiwei.brainstorming.model.vo;
 
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.weiwei.brainstorming.model.dto.question.JudgeConfig;
-import com.weiwei.brainstorming.model.dto.questionsubmit.JudgeInfo;
-import com.weiwei.brainstorming.model.entity.Question;
+import com.weiwei.brainstorming.judge.codesandbox.model.JudgeInfo;
 import com.weiwei.brainstorming.model.entity.QuestionSubmit;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 题目提交封装类
