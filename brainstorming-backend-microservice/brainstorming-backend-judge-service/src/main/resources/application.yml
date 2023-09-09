@@ -2,7 +2,7 @@
 
 spring:
   application:
-    name: brainstorming-backend-user-service
+    name: brainstorming-backend-judge-service
   # 默认 dev 环境
   profiles:
     active: dev
@@ -37,7 +37,7 @@ spring:
       max-file-size: 10MB
 server:
   address: 0.0.0.0
-  port: 8102
+  port: 8104
   servlet:
     context-path: /oj
     # cookie 30 天过期
