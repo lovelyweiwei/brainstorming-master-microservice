@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/brainstorming-master-boot.iml" filepath="$PROJECT_DIR$/brainstorming-master-boot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/brainstorming-master-microservice.iml" filepath="$PROJECT_DIR$/brainstorming-master-microservice.iml" />
     </modules>
   </component>
 </project>
