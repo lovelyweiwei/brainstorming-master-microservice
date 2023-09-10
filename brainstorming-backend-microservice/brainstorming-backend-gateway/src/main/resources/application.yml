@@ -1,0 +1,26 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    gateway:
+      routes:
+        - id: brainstorming-backend-user-service
+          uri: lb://brainstorming-backend-user-service
+          predicates:
+            - Path=/oj/user/**
+        - id: brainstorming-backend-question-service
+          uri: lb://brainstorming-backend-question-service
+          predicates:
+            - Path=/oj/question/**
+        - id: brainstorming-backend-judge-service
+          uri: lb://brainstorming-backend-judge-service
+          predicates:
+            - Path=/oj/judge/**
+
+  application:
+    name: brainstorming-backend-gateway
+  main:
+    web-application-type: reactive
+server:
+  port: 8999

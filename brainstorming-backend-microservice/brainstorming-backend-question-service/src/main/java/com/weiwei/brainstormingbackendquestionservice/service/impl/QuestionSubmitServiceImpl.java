@@ -18,8 +18,8 @@ import com.weiwei.brainstormingbackendmodel.vo.QuestionSubmitVO;
 import com.weiwei.brainstormingbackendquestionservice.mapper.QuestionSubmitMapper;
 import com.weiwei.brainstormingbackendquestionservice.service.QuestionService;
 import com.weiwei.brainstormingbackendquestionservice.service.QuestionSubmitService;
-import com.weiwei.brainstormingbackendserviceclient.service.JudgeService;
-import com.weiwei.brainstormingbackendserviceclient.service.UserService;
+import com.weiwei.brainstormingbackendserviceclient.service.JudgeFeignClient;
+import com.weiwei.brainstormingbackendserviceclient.service.UserFeignClient;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,11 +42,11 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Resource
     private QuestionService questionService;
     @Resource
-    private UserService userService;
+    private UserFeignClient userFeignClient;
 
     @Resource
     @Lazy // 懒加载，解决循环依赖
-    private JudgeService judgeService;
+    private JudgeFeignClient judgeFeignClient;
 
     /**
      * 题目提交
@@ -88,7 +88,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         // 执行判题服务
         Long questionSubmitId = questionSubmit.getId();
         CompletableFuture.runAsync(() -> {
-            judgeService.doJudge(questionSubmitId);
+            judgeFeignClient.doJudge(questionSubmitId);
         });
 
         return questionSubmitId;
@@ -131,7 +131,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         QuestionSubmitVO questionSubmitVO = QuestionSubmitVO.objToVo(questionSubmit);
         // 脱敏：仅本人和管理员能看见自己（提交 userId 和登录用户 id 不同）提交的代码
         // 处理脱敏
-        if (loginUser.getId() != questionSubmit.getUserId() && !userService.isAdmin(loginUser)) {
+        if (loginUser.getId() != questionSubmit.getUserId() && !userFeignClient.isAdmin(loginUser)) {
             questionSubmitVO.setCode(null);
         }
         return questionSubmitVO;
@@ -153,7 +153,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         //性能高的写法
         // 1. 关联查询用户信息
         //Set<Long> userIdSet = questionSubmitList.stream().map(QuestionSubmit::getUserId).collect(Collectors.toSet());
-        //Map<Long, List<User>> userIdUserListMap = userService.listByIds(userIdSet).stream()
+        //Map<Long, List<User>> userIdUserListMap = userFeignClient.listByIds(userIdSet).stream()
         //        .collect(Collectors.groupingBy(User::getId));
         // 填充信息
         //List<QuestionSubmitVO> questionSubmitVOList = questionSubmitList.stream().map(questionSubmit -> {
@@ -163,7 +163,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         //    if (userIdUserListMap.containsKey(userId)) {
         //        user = userIdUserListMap.get(userId).get(0);
         //    }
-        //    questionSubmitVO.setUserVO(userService.getUserVO(user));
+        //    questionSubmitVO.setUserVO(userFeignClient.getUserVO(user));
         //    return questionSubmitVO;
         //}).collect(Collectors.toList());
 
