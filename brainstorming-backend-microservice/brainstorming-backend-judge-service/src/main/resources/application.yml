@@ -20,15 +20,15 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/brainstorming
-    username: root
-    password: 666
+    username: 
+    password: 
   # Redis 配置
   redis:
     database: 1
-    host: localhost
+    host:
     port: 6379
     timeout: 5000
-    #    password: 666
+    #    password:
   cloud:
     nacos:
       discovery:
@@ -36,12 +36,12 @@ spring:
   # RabbitMQ 配置
   rabbitmq:
     host: 192.168.40.134
-    #    host: localhost
+    #    host: 
     port: 5672
-    username: admin
-    password: admin
+    username: 
+    password: 
     connection-timeout: 5000
-    virtual-host: weiwei
+    virtual-host: 
 
 server:
   address: 0.0.0.0
