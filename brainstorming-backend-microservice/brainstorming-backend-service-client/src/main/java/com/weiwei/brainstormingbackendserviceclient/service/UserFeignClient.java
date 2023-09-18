@@ -1,13 +1,9 @@
 package com.weiwei.brainstormingbackendserviceclient.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.weiwei.brainstormingbackendcommon.common.ErrorCode;
 import com.weiwei.brainstormingbackendcommon.exception.BusinessException;
-import com.weiwei.brainstormingbackendmodel.dto.user.UserQueryRequest;
 import com.weiwei.brainstormingbackendmodel.entity.User;
 import com.weiwei.brainstormingbackendmodel.enums.UserRoleEnum;
-import com.weiwei.brainstormingbackendmodel.vo.LoginUserVO;
 import com.weiwei.brainstormingbackendmodel.vo.UserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cloud.openfeign.FeignClient;

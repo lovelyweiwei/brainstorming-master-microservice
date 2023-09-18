@@ -21,6 +21,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+            <version>4.3.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.weiwei</groupId>
             <artifactId>brainstorming-backend-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
@@ -34,6 +39,10 @@
             <groupId>com.weiwei</groupId>
             <artifactId>brainstorming-backend-model</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -1,4 +1,4 @@
-package com.weiwei.brainstormingbackendjudgeservice.judge;
+package com.weiwei.brainstormingbackendjudgeservice.judge.service;
 
 import com.weiwei.brainstormingbackendmodel.entity.QuestionSubmit;
 

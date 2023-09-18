@@ -29,11 +29,19 @@ spring:
     port: 6379
     timeout: 5000
   #    password: 666
-
+  # nacos 配置
   cloud:
     nacos:
       discovery:
         server-addr: localhost:8848
+  # RabbitMQ 配置
+  rabbitmq:
+    host: 192.168.40.134
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: weiwei
+
 server:
   address: 0.0.0.0
   port: 8103
@@ -43,6 +51,7 @@ server:
     session:
       cookie:
         max-age: 2592000
+        path: /oj   #修改cookie路径
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
@@ -56,3 +65,5 @@ mybatis-plus:
 #代码沙箱配置
 codesandbox:
   type: remote
+knife4j:
+  enable: true

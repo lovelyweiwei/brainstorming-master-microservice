@@ -17,7 +17,8 @@ import javax.print.attribute.HashPrintRequestAttributeSet;
  * @Date 2023/9/9 13:44
  * @Version 1.0
  */
-@RestController("/inner")
+@RestController
+@RequestMapping("/inner")
 public class InnerQuestionController implements QuestionFeignClient {
 
     @Resource
@@ -34,7 +35,7 @@ public class InnerQuestionController implements QuestionFeignClient {
 
     @Override
     @GetMapping("/question_submit/get/id")
-    public QuestionSubmit getQuestionSubmitById(@RequestParam("questionId") long questionSubmitId) {
+    public QuestionSubmit getQuestionSubmitById(@RequestParam("questionSubmitId") long questionSubmitId) {
         return questionSubmitService.getById(questionSubmitId);
     }
 

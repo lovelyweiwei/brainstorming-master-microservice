@@ -1,9 +1,10 @@
 package com.weiwei.brainstormingbackendjudgeservice.controller.inner;
 
-import com.weiwei.brainstormingbackendjudgeservice.judge.JudgeService;
+import com.weiwei.brainstormingbackendjudgeservice.judge.service.JudgeService;
 import com.weiwei.brainstormingbackendmodel.entity.QuestionSubmit;
 import com.weiwei.brainstormingbackendserviceclient.service.JudgeFeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +17,8 @@ import javax.annotation.Resource;
  * @Date 2023/9/9 13:44
  * @Version 1.0
  */
-@RestController("/inner")
+@RestController
+@RequestMapping("/inner")
 public class InnerJudgeController implements JudgeFeignClient {
 
     @Resource

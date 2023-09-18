@@ -16,6 +16,7 @@ import com.weiwei.brainstormingbackendmodel.enums.QuestionSubmitLanguageEnum;
 import com.weiwei.brainstormingbackendmodel.enums.QuestionSubmitStatusEnum;
 import com.weiwei.brainstormingbackendmodel.vo.QuestionSubmitVO;
 import com.weiwei.brainstormingbackendquestionservice.mapper.QuestionSubmitMapper;
+import com.weiwei.brainstormingbackendquestionservice.rabbitmq.MyMessageProducer;
 import com.weiwei.brainstormingbackendquestionservice.service.QuestionService;
 import com.weiwei.brainstormingbackendquestionservice.service.QuestionSubmitService;
 import com.weiwei.brainstormingbackendserviceclient.service.JudgeFeignClient;
@@ -47,6 +48,12 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Resource
     @Lazy // 懒加载，解决循环依赖
     private JudgeFeignClient judgeFeignClient;
+
+    @Resource
+    private MyMessageProducer myMessageProducer;
+
+    @Resource
+    private RedisLimiterManager redisLimiterManager;
 
     /**
      * 题目提交
@@ -85,11 +92,17 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据插入失败");
         }
 
+        //限流判断，每个用户一个限流器
+        redisLimiterManager.doRateLimit("doQuestionSubmit_" + loginUser.getId());
+
         // 执行判题服务
         Long questionSubmitId = questionSubmit.getId();
-        CompletableFuture.runAsync(() -> {
-            judgeFeignClient.doJudge(questionSubmitId);
-        });
+        // 使用消息队列
+        myMessageProducer.sendMessage("oj_exchange", "oj", String.valueOf(questionSubmitId));
+        // 异步
+        //CompletableFuture.runAsync(() -> {
+        //    judgeFeignClient.doJudge(questionSubmitId);
+        //});
 
         return questionSubmitId;
     }

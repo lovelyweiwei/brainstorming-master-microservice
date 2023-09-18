@@ -28,7 +28,7 @@ spring:
     host: localhost
     port: 6379
     timeout: 5000
-  #    password: 666
+    password: 666
 
   cloud:
     nacos:
@@ -43,6 +43,7 @@ server:
     session:
       cookie:
         max-age: 2592000
+        path: /oj   #修改cookie路径
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
@@ -56,3 +57,5 @@ mybatis-plus:
 #代码沙箱配置
 codesandbox:
   type: remote
+knife4j:
+  enable: true
